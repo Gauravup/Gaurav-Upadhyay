@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /assets/
+Allow: /assets/gaurav-image.jpg
+
+# Googlebot Image Crawler
+User-agent: Googlebot-Image
+Allow: /assets/
+Allow: /assets/gaurav-image.jpg
+
+Sitemap: https://gauravup.github.io/gauravupadhyay/sitemap.xml
+
