@@ -8,5 +8,5 @@ User-agent: Googlebot-Image
 Allow: /assets/
 Allow: /assets/gaurav-image.jpg
 
-Sitemap: https://gauravup.github.io/gauravupadhyay/sitemap.xml
+Sitemap: https://gauravarvindupadhyay.vercel.app/sitemap.xml
 

@@ -15,7 +15,7 @@ import "./globals.css";
 =============================================================================
 */
 
-const siteUrl = "https://gauravup.github.io/gauravupadhyay";
+const siteUrl = "https://gauravarvindupadhyay.vercel.app";
 const imageUrl = `${siteUrl}/assets/gaurav-image.jpg`;
 
 const metaTitle = "Gaurav Arvind Upadhyay | Full Stack Web Developer in Mumbai";
@@ -97,8 +97,9 @@ const googleKnowledgeGraphSchema = {
       },
       "url": siteUrl,
       "sameAs": [
-        "https://github.com/gauravup",
-        "https://gauravup.github.io/gauravupadhyay"
+        "https://github.com/Gauravup",
+        "https://github.com/Gauravup/Gaurav-Upadhyay",
+        "https://www.instagram.com/gaurav_upadhyay2002/"
       ],
       "alumniOf": {
         "@type": "CollegeOrUniversity",

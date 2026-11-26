@@ -2,12 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://gauravup.github.io/gauravupadhyay/</loc>
-    <lastmod>2026-11-24</lastmod>
+    <loc>https://gauravarvindupadhyay.vercel.app/</loc>
+    <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://gauravup.github.io/gauravupadhyay/assets/gaurav-image.jpg</image:loc>
+      <image:loc>https://gauravarvindupadhyay.vercel.app/assets/gaurav-image.jpg</image:loc>
       <image:title>Gaurav Arvind Upadhyay - Full Stack Web Developer in Mumbai</image:title>
       <image:caption>Official Portfolio Photo of Gaurav Arvind Upadhyay</image:caption>
     </image:image>
