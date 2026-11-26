@@ -34,6 +34,15 @@ export default function PortfolioCarousel({ onReplayIntro }) {
     { name: "Contact", index: 4, shortName: "Contact", label: "05 / 05 • CONTACT" }
   ];
 
+  // Dynamic ambient glow themes that evolve smoothly as the user slides across sections
+  const slideGlowThemes = [
+    { g1: 'rgba(168, 85, 247, 0.45)', g2: 'rgba(56, 189, 248, 0.35)' }, // Home: Purple & Cyan
+    { g1: 'rgba(139, 92, 246, 0.42)', g2: 'rgba(16, 185, 129, 0.32)' }, // About: Violet & Emerald
+    { g1: 'rgba(6, 182, 212, 0.45)', g2: 'rgba(234, 179, 8, 0.32)' },   // Skills: Cyan & Gold
+    { g1: 'rgba(236, 72, 153, 0.45)', g2: 'rgba(168, 85, 247, 0.35)' }, // Projects: Magenta & Purple
+    { g1: 'rgba(59, 130, 246, 0.45)', g2: 'rgba(168, 85, 247, 0.35)' }  // Contact: Blue & Violet
+  ];
+
   const handleNextSlide = () => {
     setActiveSlide((prev) => (prev + 1) % navItems.length);
   };
@@ -95,17 +104,19 @@ export default function PortfolioCarousel({ onReplayIntro }) {
       onTouchEnd={handleTouchEnd}
     >
       
-      {/* Dynamic Ambient Background Glowing Orbs (Shift position based on slide) */}
+      {/* Dynamic Ambient Background Glowing Orbs (Shifts position & glowing colors smoothly per slide) */}
       <div 
         className="ambient-glow-1"
         style={{
-          transform: `translate(${activeSlide * 35}px, ${activeSlide % 2 === 0 ? '0px' : '40px'})`
+          background: `radial-gradient(circle, ${slideGlowThemes[activeSlide]?.g1 || 'rgba(168, 85, 247, 0.45)'} 0%, transparent 70%)`,
+          transform: `translate(${activeSlide * 40}px, ${activeSlide % 2 === 0 ? '0px' : '35px'}) scale(${1 + (activeSlide % 2) * 0.1})`
         }}
       ></div>
       <div 
         className="ambient-glow-2"
         style={{
-          transform: `translate(${-activeSlide * 40}px, ${activeSlide % 2 === 0 ? '0px' : '-30px'})`
+          background: `radial-gradient(circle, ${slideGlowThemes[activeSlide]?.g2 || 'rgba(56, 189, 248, 0.28)'} 0%, transparent 70%)`,
+          transform: `translate(${-activeSlide * 45}px, ${activeSlide % 2 === 0 ? '0px' : '-25px'}) scale(${1 + ((activeSlide + 1) % 2) * 0.1})`
         }}
       ></div>
 
@@ -227,40 +238,26 @@ export default function PortfolioCarousel({ onReplayIntro }) {
             transform: `translateX(-${activeSlide * 100}vw)`
           }}
         >
-          {/* SLIDE 0: HOME */}
-          <div className="carousel-slide">
-            <div className={`carousel-slide-inner ${activeSlide === 0 ? 'slide-active' : 'slide-inactive'}`}>
-              <HomeSlide onNavigate={(idx) => setActiveSlide(idx)} />
-            </div>
-          </div>
+          {navItems.map((item, idx) => {
+            const diff = idx - activeSlide;
+            const stateClass = diff === 0 
+              ? 'slide-active' 
+              : diff < 0 
+                ? 'slide-inactive slide-prev' 
+                : 'slide-inactive slide-next';
 
-          {/* SLIDE 1: ABOUT & WORK EXPERIENCE */}
-          <div className="carousel-slide">
-            <div className={`carousel-slide-inner ${activeSlide === 1 ? 'slide-active' : 'slide-inactive'}`}>
-              <AboutSlide onNavigate={(idx) => setActiveSlide(idx)} />
-            </div>
-          </div>
-
-          {/* SLIDE 2: TECHNICAL SKILLS */}
-          <div className="carousel-slide">
-            <div className={`carousel-slide-inner ${activeSlide === 2 ? 'slide-active' : 'slide-inactive'}`}>
-              <SkillsSlide onNavigate={(idx) => setActiveSlide(idx)} />
-            </div>
-          </div>
-
-          {/* SLIDE 3: CLIENT PROJECTS */}
-          <div className="carousel-slide">
-            <div className={`carousel-slide-inner ${activeSlide === 3 ? 'slide-active' : 'slide-inactive'}`}>
-              <ProjectsSlide onNavigate={(idx) => setActiveSlide(idx)} />
-            </div>
-          </div>
-
-          {/* SLIDE 4: CONTACT */}
-          <div className="carousel-slide">
-            <div className={`carousel-slide-inner ${activeSlide === 4 ? 'slide-active' : 'slide-inactive'}`}>
-              <ContactSlide onNavigate={(idx) => setActiveSlide(idx)} />
-            </div>
-          </div>
+            return (
+              <div key={item.name} className="carousel-slide">
+                <div className={`carousel-slide-inner ${stateClass}`}>
+                  {idx === 0 && <HomeSlide onNavigate={(i) => setActiveSlide(i)} />}
+                  {idx === 1 && <AboutSlide onNavigate={(i) => setActiveSlide(i)} />}
+                  {idx === 2 && <SkillsSlide onNavigate={(i) => setActiveSlide(i)} />}
+                  {idx === 3 && <ProjectsSlide onNavigate={(i) => setActiveSlide(i)} />}
+                  {idx === 4 && <ContactSlide onNavigate={(i) => setActiveSlide(i)} />}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </main>
 

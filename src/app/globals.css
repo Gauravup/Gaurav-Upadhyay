@@ -202,7 +202,7 @@ html, body {
 }
 
 /* ========================================================
-   ENHANCED CAROUSEL ENGINE (Depth & Smooth Inertia)
+   ENHANCED CAROUSEL ENGINE (3D Coverflow & Parallax Depth)
    ======================================================== */
 
 .carousel-viewport {
@@ -213,15 +213,17 @@ html, body {
   display: flex;
   align-items: stretch;
   min-height: 0;
-  perspective: 1200px; /* 3D Depth perspective */
+  perspective: 1500px; /* 3D Cinema perspective */
+  perspective-origin: 50% 50%;
 }
 
 .carousel-track {
   display: flex;
   width: 100%;
   height: 100%;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.85s cubic-bezier(0.2, 0.85, 0.25, 1);
   will-change: transform;
+  transform-style: preserve-3d;
 }
 
 .carousel-slide {
@@ -248,50 +250,129 @@ html, body {
   border-radius: 10px;
 }
 
-/* Cinematic Slide Depth & Scale Transition */
+/* 
+=============================================================
+  ✨ ULTRA-ATTRACTIVE 3D COVERFLOW & DEPTH PERSPECTIVE
+=============================================================
+*/
+
 .carousel-slide-inner {
   width: 100%;
   max-width: 1320px;
-  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), filter 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  transition: 
+    transform 0.85s cubic-bezier(0.2, 0.85, 0.25, 1), 
+    opacity 0.65s cubic-bezier(0.2, 0.85, 0.25, 1), 
+    filter 0.65s cubic-bezier(0.2, 0.85, 0.25, 1);
   will-change: transform, opacity, filter;
+  position: relative;
 }
 
-/* Active Slide: Full Scale & Crisp Focus */
+/* 🟢 Active Slide: Full Scale, Crisp Focus, Glowing Elevation */
 .slide-active {
-  transform: scale(1) translateY(0);
+  transform: perspective(1200px) translateZ(0) rotateY(0deg) scale(1);
   opacity: 1;
-  filter: blur(0px);
+  filter: blur(0px) brightness(1);
+  pointer-events: auto;
 }
 
-/* Inactive Slide: Slightly Scaled down with Subtle Blur (Apple style) */
-.slide-inactive {
-  transform: scale(0.93) translateY(12px);
-  opacity: 0.2;
-  filter: blur(6px);
+/* Subtle glowing accent flare on top of active slide */
+.slide-active::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.9), rgba(56, 189, 248, 0.9), transparent);
+  border-radius: 10px;
+  animation: slideFlareSweep 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes slideFlareSweep {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.1);
+    filter: blur(6px);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0.5;
+    transform: scaleX(0.85);
+    filter: blur(2px);
+  }
+}
+
+/* ⬅️ Previous Inactive Slides (Left Side): Angled 3D rotation into background */
+.slide-prev {
+  transform: perspective(1200px) translateZ(-200px) rotateY(18deg) scale(0.84);
+  opacity: 0.12;
+  filter: blur(8px) brightness(0.6);
   pointer-events: none;
 }
 
-/* Content Entrance Stagger Animation */
-.slide-active .anim-fade-up-1 {
-  animation: slideFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+/* ➡️ Next Inactive Slides (Right Side): Angled 3D rotation into background */
+.slide-next {
+  transform: perspective(1200px) translateZ(-200px) rotateY(-18deg) scale(0.84);
+  opacity: 0.12;
+  filter: blur(8px) brightness(0.6);
+  pointer-events: none;
+}
+
+/* Fallback for general inactive */
+.slide-inactive:not(.slide-prev):not(.slide-next) {
+  transform: perspective(1200px) translateZ(-180px) scale(0.85);
+  opacity: 0.12;
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* Responsive angles for Mobile devices (gentler tilt to avoid overflow) */
+@media (max-width: 768px) {
+  .slide-prev {
+    transform: perspective(800px) translateZ(-90px) rotateY(10deg) scale(0.9);
+    opacity: 0.15;
+    filter: blur(4px);
+  }
+  .slide-next {
+    transform: perspective(800px) translateZ(-90px) rotateY(-10deg) scale(0.9);
+    opacity: 0.15;
+    filter: blur(4px);
+  }
+}
+
+/* Content Entrance Stagger Animation on Active Slide */
+.slide-active .anim-fade-up-1,
+.slide-active .hero-role-badge,
+.slide-active .hero-main-title {
+  animation: slideFadeUp 0.65s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.05s both;
 }
 
 .slide-active .anim-fade-up-2 {
-  animation: slideFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+  animation: slideFadeUp 0.75s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.12s both;
 }
 
-.slide-active .anim-fade-up-3 {
-  animation: slideFadeUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+.slide-active .anim-fade-up-3,
+.slide-active .glass-panel,
+.slide-active .project-card,
+.slide-active .modern-contact-card {
+  animation: slideFadeUp 0.85s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.18s both;
 }
 
 @keyframes slideFadeUp {
   0% {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(28px) scale(0.97);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -307,17 +388,17 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: rgba(22, 14, 38, 0.7);
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  width: 52px;
+  height: 52px;
+  background: rgba(18, 12, 32, 0.82);
+  border: 1.5px solid rgba(168, 85, 247, 0.45);
   border-radius: 50%;
   color: #f8fafc;
-  font-size: 1.25rem;
-  backdrop-filter: blur(12px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(168, 85, 247, 0.2);
+  font-size: 1.35rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(168, 85, 247, 0.3);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .carousel-nav-prev {
@@ -329,11 +410,15 @@ html, body {
 }
 
 .carousel-floating-nav:hover {
-  background: rgba(168, 85, 247, 0.35);
-  border-color: #a855f7;
-  transform: translateY(-50%) scale(1.12);
+  background: rgba(168, 85, 247, 0.4);
+  border-color: #38bdf8;
+  transform: translateY(-50%) scale(1.15);
   color: #fff;
-  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.45);
+  box-shadow: 0 12px 35px rgba(168, 85, 247, 0.6), 0 0 30px rgba(56, 189, 248, 0.4);
+}
+
+.carousel-floating-nav:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 @media (max-width: 768px) {
@@ -348,14 +433,16 @@ html, body {
   align-items: center;
   gap: 8px;
   background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
   border-radius: 30px;
-  padding: 4px 14px;
+  padding: 5px 16px;
   backdrop-filter: blur(12px);
   font-size: 0.78rem;
-  font-weight: 600;
-  color: #cbd5e1;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  color: #c084fc;
+  letter-spacing: 1px;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+  transition: all 0.3s ease;
 }
 
 /* ========================================================
