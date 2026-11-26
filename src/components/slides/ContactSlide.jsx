@@ -49,11 +49,11 @@ export default function ContactSlide({ onNavigate }) {
         });
         setFormState({ name: '', email: '', message: '' });
       } else {
-        setErrorMessage(data.error || 'Message send nahi ho paya. Kripya dobara koshish karein.');
+        setErrorMessage(data.error || 'Failed to send message. Please try again.');
       }
     } catch (error) {
       console.error('Fetch error:', error);
-      setErrorMessage('Network error: Server se connect nahi ho paya. Kripya connection check karein.');
+      setErrorMessage('Network error: Unable to connect to the server. Please check your connection.');
     } finally {
       setIsSending(false);
     }
@@ -190,8 +190,7 @@ export default function ContactSlide({ onNavigate }) {
                 </h3>
 
                 <p className="text-light mb-3" style={{ fontSize: '0.95rem', lineHeight: '1.6', maxWidth: '480px', margin: '0 auto' }}>
-                  Aapka message successfully Gaurav ke Gmail inbox me deliver ho gaya hai. 
-                  Gaurav aapse jaldi hi <strong className="text-info">{submittedData.email}</strong> par contact karenge!
+                  Your message has been sent successfully. I will get back to you shortly at <strong className="text-info">{submittedData.email}</strong>.
                 </p>
 
                 <div className="d-flex justify-content-center gap-2 mt-4">
