@@ -43,71 +43,62 @@ export async function POST(request) {
     // Google App Password me se spaces hatao (e.g. "abcd efgh" -> "abcdefgh")
     const emailPass = process.env.EMAIL_PASS?.replace(/\s+/g, '');
 
-    // AGAR CREDENTIALS SET HAIN -> Real Gmail SMTP se send karein
-    if (emailUser && emailPass) {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: emailUser,
-          pass: emailPass,
+    // Agar Vercel par Environment Variables set nahi hain:
+    if (!emailUser || !emailPass) {
+      console.error("❌ Vercel Configuration Missing: EMAIL_USER or EMAIL_PASS environment variables are not found!");
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Vercel par EMAIL_USER ya EMAIL_PASS environment variable configure nahi hai. Kripya Vercel Project Settings me add karke redeploy karein.' 
         },
-      });
-
-      // Email template banayein jo Gaurav ke inbox me aayega
-      const mailOptions = {
-        from: `"${name}" <${emailUser}>`, // Sender display
-        replyTo: email, // Jab Gaurav reply karega to seedha user ko jayega
-        to: 'gauravupadhyay6095@gmail.com', // Receiver (Gaurav)
-        subject: `🚀 New Portfolio Message from ${name}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; background-color: #0e091b; color: #f8fafc; padding: 25px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #8b5cf6;">
-            <h2 style="color: #c084fc; border-bottom: 2px solid rgba(168, 85, 247, 0.4); padding-bottom: 12px; margin-top: 0;">
-              📬 New Message from Portfolio
-            </h2>
-            <p style="font-size: 15px; margin-bottom: 8px;">
-              <strong>👤 Sender Name:</strong> <span style="color: #38bdf8;">${name}</span>
-            </p>
-            <p style="font-size: 15px; margin-bottom: 15px;">
-              <strong>📧 Sender Email:</strong> <a href="mailto:${email}" style="color: #38bdf8;">${email}</a>
-            </p>
-            <div style="background-color: rgba(255, 255, 255, 0.06); padding: 16px; border-radius: 8px; border-left: 4px solid #8b5cf6; margin-top: 15px;">
-              <strong style="color: #c084fc; display: block; margin-bottom: 6px;">💬 Message:</strong>
-              <p style="margin: 0; line-height: 1.6; white-space: pre-wrap; font-size: 14px; color: #e2e8f0;">${message}</p>
-            </div>
-            <p style="font-size: 12px; color: #94a3b8; margin-top: 25px; text-align: center;">
-              Sent via Gaurav Upadhyay Portfolio Backend API • ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
-            </p>
-          </div>
-        `,
-      };
-
-      await transporter.sendMail(mailOptions);
-
-      return NextResponse.json({
-        success: true,
-        message: 'Aapka message Gaurav ko successfully email ke zariye bhej diya gaya hai!',
-      });
+        { status: 500 }
+      );
     }
 
-    // AGAR CREDENTIALS ABHI .env ME SET NAHI HAIN -> Server Console me safe log karein
-    console.log(`
-===========================================================
-📬 [BACKEND API ROUTE /api/contact] NEW MESSAGE RECEIVED:
------------------------------------------------------------
-👤 Name:    ${name}
-📧 Email:   ${email}
-💬 Message: ${message}
-⏰ Time:    ${new Date().toISOString()}
------------------------------------------------------------
-ℹ️  NOTE: Real email send karne ke liye '.env.local' me 
-    EMAIL_USER aur EMAIL_PASS (Gmail App Password) add karein!
-===========================================================
-    `);
+    // 4. Real Gmail SMTP (Vercel Serverless Compatible via Port 465 SSL)
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+    });
+
+    // Email template banayein jo Gaurav ke inbox me aayega
+    const mailOptions = {
+      from: `"Portfolio Contact Form" <${emailUser}>`,
+      replyTo: email, // Direct reply to user
+      to: 'gauravupadhyay6095@gmail.com',
+      subject: `🚀 New Portfolio Message from ${name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; background-color: #0e091b; color: #f8fafc; padding: 25px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #8b5cf6;">
+          <h2 style="color: #c084fc; border-bottom: 2px solid rgba(168, 85, 247, 0.4); padding-bottom: 12px; margin-top: 0;">
+            📬 New Message from Portfolio
+          </h2>
+          <p style="font-size: 15px; margin-bottom: 8px;">
+            <strong>👤 Sender Name:</strong> <span style="color: #38bdf8;">${name}</span>
+          </p>
+          <p style="font-size: 15px; margin-bottom: 15px;">
+            <strong>📧 Sender Email:</strong> <a href="mailto:${email}" style="color: #38bdf8;">${email}</a>
+          </p>
+          <div style="background-color: rgba(255, 255, 255, 0.06); padding: 16px; border-radius: 8px; border-left: 4px solid #8b5cf6; margin-top: 15px;">
+            <strong style="color: #c084fc; display: block; margin-bottom: 6px;">💬 Message:</strong>
+            <p style="margin: 0; line-height: 1.6; white-space: pre-wrap; font-size: 14px; color: #e2e8f0;">${message}</p>
+          </div>
+          <p style="font-size: 12px; color: #94a3b8; margin-top: 25px; text-align: center;">
+            Sent via Gaurav Upadhyay Portfolio Backend API • ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+          </p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
 
     return NextResponse.json({
       success: true,
-      simulated: true,
-      message: 'Message backend server par successfully capture ho gaya!',
+      message: 'Aapka message Gaurav ko successfully email ke zariye bhej diya gaya hai!',
     });
 
   } catch (error) {
